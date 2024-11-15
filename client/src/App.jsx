@@ -4,7 +4,7 @@ import Dashboard from './pages/Dashboard'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import Home from './pages/Home'
 import Signup from './pages/Signup'
-
+import Editor from './Editor'
 
 function App() {
 
@@ -32,6 +32,7 @@ function App() {
           <Route path='/' element={<Home/>}/>
           <Route path='/signup' element={<SignupWrapper/>}/>
           <Route path='/dashboard' element={<Dashboard/>}/>
+          <Route path="/editor/:id" element={<Editor />} />
         </Routes>
       </BrowserRouter>
     </>
