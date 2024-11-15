@@ -3,10 +3,9 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/default.css';
 import Quill from 'quill'
 import "quill/dist/quill.snow.css" 
-import CodeMirror from 'codemirror';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/python/python';
+// import texteditor.css
+import '../css/texteditor.css'
+
 
 
 window.hljs = hljs;
@@ -14,6 +13,9 @@ window.hljs = hljs;
 function TextEditor() {
     const [quill, setQuill] = useState()
     const [selectedLanguage, setSelectedLanguage] = useState('javascript')
+    const [isToolbarVisible, setToolbarVisible] = useState(false);
+    
+
     const wrapperRef = useCallback((wrapper) => {
         if (wrapper == null) return
         wrapper.innerHTML = ""
@@ -30,44 +32,30 @@ function TextEditor() {
                      {'indent': '-1'}, {'indent': '+1'}],
                     ['link', 'image', 'video'],
                     ['clean'],
-                    [{ 'code-block': ['javascript', 'python', 'html', 'css'] }]
                 ],
-                syntax: {
-                    hljs
-                }
             }    
         })
         setQuill(q)
     }, [])
 
-    useEffect(() => {
-        if (quill == null) return
-        quill.on('text-change', () => {
-            document.querySelectorAll('pre').forEach(pre => {
-                if (!pre.hasAttribute('data-codemirror')) {
-                    const code = pre.querySelector('code');
-                    const codeMirrorInstance = CodeMirror(function (elt) {
-                        pre.replaceChild(elt, code);
-                    }, {
-                        value: code ? code.textContent : '',
-                        mode: selectedLanguage,
-                        lineNumbers: true,
-                        lineWrapping: true,
-                        indentUnit: 4,
-                    });
-                    pre.setAttribute('data-codemirror', 'true');
-                }
-            });
-        });
+    const toggleToolbar = () => {
+        setToolbarVisible((prev) => !prev);
 
-        const toolbar = quill.getModule('toolbar');
-        toolbar.addHandler('code-block', (value) => {
-            setSelectedLanguage(value); // Update selected language
-        });
-    }, [])
+        // Directly manipulate toolbar visibility
+        const toolbar = document.querySelector('.ql-toolbar');
+        if (toolbar) {
+            toolbar.style.display = isToolbarVisible ? 'none' : 'flex';
+        }
+    };
 
     return (
-        <div id="container" ref={wrapperRef}></div>
+        <>
+            <button id="toggle-toolbar-btn" onClick={toggleToolbar}>
+                {isToolbarVisible ? 'Hide Toolbar' : 'Show Toolbar'}
+            </button>
+            <div id="container" ref={wrapperRef}></div>
+        </>
+        
     )
 }
 
